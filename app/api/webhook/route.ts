@@ -24,24 +24,24 @@ export async function POST(req: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies })
     // Store the webhook event in Supabase
-    const activity: Activity = {
-      id: `${body.object_id}-${body.event_time}`,
+    const activity: Omit<Activity, 'id'> = {
+      event_id: `${body.object_id}-${body.event_time}`,
       athlete_id: body.owner_id,
       event_time: new Date(body.event_time * 1000).toISOString(),
       activity_type: body.object_type,
       event_type: body.aspect_type,
       object_type: body.object_type,
       object_id: body.object_id,
-      updates: body.updates || {},
+      updates: JSON.stringify(body.updates || {}),
     }
 
-    const { error } = await supabase.from("activities").insert(activity)
+    const { error, data } = await supabase.from("activities").insert(activity)
 
     if (error) {
       console.error("Error storing activity:", error)
       return NextResponse.json({ error: "Failed to store activity" }, { status: 500 })
     }
-
+    console.log(data);
     return NextResponse.json({ message: "Activity stored successfully" })
   } catch (error) {
     console.error("Error processing webhook:", error)

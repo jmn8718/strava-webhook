@@ -12,14 +12,15 @@ export const createServerSupabaseClient = () =>
 export const createBrowserSupabaseClient = createClientComponentClient
 
 export type Activity = {
-  id: string
+  id?: string
+  event_id?: string
   athlete_id: number
   event_time: string
   activity_type: string
   event_type: string
   object_type: string
   object_id: number
-  updates: Record<string, any>
+  updates: string // Record<string, any>
   created_at?: string
 }
 
